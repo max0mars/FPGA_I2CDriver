@@ -1,0 +1,8 @@
+# Quartus output and intermediate files
+db/
+incremental_db/
+output_files/
+simulation/
+
+# Build output
+build/
