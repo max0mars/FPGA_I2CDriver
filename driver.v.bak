@@ -1,8 +1,0 @@
-module driver (
-	inout SDA,
-	output SCL 
-);
-
-
-
-end module

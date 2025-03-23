@@ -1,8 +1,0 @@
-module driver_tb();
-
-reg[3:0] state = 0;
-reg clock = 0;
-always @ #10 clock = ~clock;
-
-
-endmodule

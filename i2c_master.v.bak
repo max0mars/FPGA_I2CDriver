@@ -1,0 +1,135 @@
+module i2c_master #(
+    parameter input_clk = 50000000,
+    parameter bus_clk = 400000
+) (
+    input wire clk,
+    input wire reset_n,
+    input wire ena,
+    input wire [6:0] addr,
+    input wire rw,
+    input wire [7:0] data_wr,
+    output reg busy,
+    output reg [7:0] data_rd,
+    output reg ack_error,
+    inout wire sda,
+    inout wire scl
+);
+
+    localparam divider = (input_clk / bus_clk) / 4;
+    reg [7:0] addr_rw, data_tx, data_rx;
+    reg [2:0] state;
+    reg data_clk, data_clk_prev, scl_clk, scl_ena;
+    reg sda_int;
+    reg sda_ena_n;
+    reg [2:0] bit_cnt;
+    reg stretch;
+    reg [31:0] count;
+
+    localparam READY = 0, START = 1, COMMAND = 2, SLV_ACK1 = 3, WR = 4, RD = 5, SLV_ACK2 = 6, MSTR_ACK = 7, STOP = 8;
+
+    assign scl = (scl_ena && ~scl_clk) ? 1'b0 : 1'bz;
+    assign sda = (sda_ena_n == 1'b0) ? 1'b0 : 1'bz;
+
+    always @(posedge clk or negedge reset_n) begin
+        if (!reset_n) begin
+            stretch <= 1'b0;
+            count <= 0;
+            data_clk <= 1'b0;
+            data_clk_prev <= 1'b0;
+            scl_clk <= 1'b0;
+        end else begin
+            data_clk_prev <= data_clk;
+            if (count == (divider * 4 - 1)) begin
+                count <= 0;
+            end else if (!stretch) begin
+                count <= count + 1;
+            end
+
+            case (count)
+                0: begin scl_clk <= 1'b0; data_clk <= 1'b0; end
+                divider: begin scl_clk <= 1'b0; data_clk <= 1'b1; end
+                divider * 2: begin
+                    scl_clk <= 1'b1;
+                    stretch <= (scl == 1'b0) ? 1'b1 : 1'b0;
+                    data_clk <= 1'b1;
+                end
+                divider * 3: begin scl_clk <= 1'b1; data_clk <= 1'b0; end
+            endcase
+        end
+    end
+
+    always @(posedge clk or negedge reset_n) begin
+        if (!reset_n) begin
+            state <= READY;
+            busy <= 1'b1;
+            scl_ena <= 1'b0;
+            sda_int <= 1'b1;
+            ack_error <= 1'b0;
+            bit_cnt <= 7;
+            data_rd <= 8'h00;
+        end else begin
+            if (data_clk && !data_clk_prev) begin
+                case (state)
+                    READY: if (ena) begin
+                        busy <= 1'b1;
+                        addr_rw <= {addr, rw};
+                        data_tx <= data_wr;
+                        state <= START;
+                    end else begin
+                        busy <= 1'b0;
+                        state <= READY;
+                    end
+                    START: begin sda_int <= addr_rw[bit_cnt]; state <= COMMAND; end
+                    COMMAND: if (bit_cnt == 0) begin
+                        sda_int <= 1'b1;
+                        bit_cnt <= 7;
+                        state <= SLV_ACK1;
+                    end else begin
+                        bit_cnt <= bit_cnt - 1;
+                        sda_int <= addr_rw[bit_cnt - 1];
+                        state <= COMMAND;
+                    end
+                    SLV_ACK1: state <= (addr_rw[0] == 0) ? WR : RD;
+                    WR: if (bit_cnt == 0) begin
+                        sda_int <= 1'b1;
+                        bit_cnt <= 7;
+                        state <= SLV_ACK2;
+                    end else begin
+                        bit_cnt <= bit_cnt - 1;
+                        sda_int <= data_tx[bit_cnt - 1];
+                        state <= WR;
+                    end
+                    RD: if (bit_cnt == 0) begin
+                        sda_int <= (ena && (addr_rw == {addr, rw})) ? 1'b0 : 1'b1;
+                        bit_cnt <= 7;
+                        data_rd <= data_rx;
+                        state <= MSTR_ACK;
+                    end else begin
+                        bit_cnt <= bit_cnt - 1;
+                        state <= RD;
+                    end
+                    SLV_ACK2: state <= (ena) ? ((addr_rw == {addr, rw}) ? WR : START) : STOP;
+                    MSTR_ACK: state <= (ena) ? ((addr_rw == {addr, rw}) ? RD : START) : STOP;
+                    STOP: begin busy <= 1'b0; state <= READY; end
+                    default: state <= READY;
+                endcase
+            end else if (!data_clk && data_clk_prev) begin
+                case (state)
+                    START: if (!scl_ena) begin scl_ena <= 1'b1; ack_error <= 1'b0; end
+                    SLV_ACK1, SLV_ACK2: if (sda != 1'b0) ack_error <= 1'b1;
+                    RD: data_rx[bit_cnt] <= sda;
+                    STOP: scl_ena <= 1'b0;
+                endcase
+            end
+        end
+    end
+
+    always @(*) begin
+        case (state)
+            START: sda_ena_n = data_clk_prev;
+            STOP: sda_ena_n = ~data_clk_prev;
+            default: sda_ena_n = sda_int;
+        endcase
+    end
+
+endmodule
