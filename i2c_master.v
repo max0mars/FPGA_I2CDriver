@@ -96,7 +96,7 @@ always @ (posedge clk or negedge reset_n) begin
 				COMMAND: begin
 					if(bit_cnt == 0) begin
 						sda_int <= 1'b0;
-						bit_cnt <= 7;
+						bit_cnt <= 3'd7;
 						state <= SLV_ACK1;
 					end else begin
 						bit_cnt <= bit_cnt - 1'b1;
@@ -117,7 +117,7 @@ always @ (posedge clk or negedge reset_n) begin
 					busy <= 1'b1;
 					if(bit_cnt == 0) begin
 						sda_int <= 1'b1;
-						bit_cnt <= 7;
+						bit_cnt <= 3'd7;
 						state <= SLV_ACK2;
 					end else begin
 						bit_cnt <= bit_cnt - 1'b1;
@@ -127,20 +127,66 @@ always @ (posedge clk or negedge reset_n) begin
 				end
 				RD: begin
 					busy <= 1'b1;
-					
+					if(bit_cnt == 0) begin
+						if(ena == 1 && addr_rw == {addr, rw}) sda_int <= 1'b0;
+						else sda_int <= 1'b1;
+						bit_cnt <= 3'd7;
+						data_rd <= data_rx;
+						state <= MSTR_ACK;
+					end else begin
+						bit_cnt <= bit_cnt - 1'b1;
+						state <= RD;
+					end
 				end
 				SLV_ACK2: begin
-				
+					if(ena == 1) begin
+						busy <= 1'b0;
+						addr_rw <= {addr, rw};
+						data_tx <= data_wr;
+						if(addr_rw == {addr, rw}) begin
+							sda_int <= data_wr[bit_cnt];
+							state <= WR;
+						end else state <= START;	//repeated start
+					end else state <= STOP;			//done reading
 				end
 				MSTR_ACK: begin
-				
+					if(ena == 1) begin
+						busy <= 1'b0;
+						addr_rw <= {addr, rw};
+						data_tx <= data_wr;
+						if(addr_rw == {addr, rw}) begin
+							sda_int <= 1'b1;
+							state <= RD;
+						end else state <= START;
+					end else state <= STOP;
 				end
 				STOP: begin
-				
+					busy <= 1'b0;
+					state <= READY;
 				end
 			endcase
 		end else if (data_clk == 0 && data_clk_prev == 1)	begin	//data_clk falling
-		
+			case(state)
+				START: begin
+					if(scl_ena == 0) begin
+						scl_ena <= 1'b1;
+						ack_error <= 1'b0;
+					end
+				end
+				SLV_ACK1: begin
+					if(sda != 0 || ack_error == 1) ack_error <= 1;
+				end
+				RD: begin
+					data_rx[bit_cnt] <= sda;
+				end
+				SLV_ACK2: begin
+					if(sda != 0 || ack_error == 1) ack_error <= 1;
+				end
+				STOP: begin
+					scl_ena <= 0;
+				end
+				default: 
+			endcase
 		end
 	end
 end

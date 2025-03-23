@@ -1,5 +1,5 @@
 Analysis & Synthesis report for FPGA_I2CDriver
-Sun Mar 23 16:42:35 2025
+Sun Mar 23 17:05:04 2025
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Standard Edition
 
 
@@ -47,13 +47,13 @@ refer to the applicable agreement for further details.
 +-----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                      ;
 +---------------------------------+-------------------------------------------------+
-; Analysis & Synthesis Status     ; Successful - Sun Mar 23 16:42:35 2025           ;
+; Analysis & Synthesis Status     ; Successful - Sun Mar 23 17:05:04 2025           ;
 ; Quartus Prime Version           ; 18.1.0 Build 625 09/12/2018 SJ Standard Edition ;
 ; Revision Name                   ; FPGA_I2CDriver                                  ;
 ; Top-level Entity Name           ; i2c_master                                      ;
 ; Family                          ; Cyclone V                                       ;
 ; Logic utilization (in ALMs)     ; N/A                                             ;
-; Total registers                 ; 46                                              ;
+; Total registers                 ; 55                                              ;
 ; Total pins                      ; 31                                              ;
 ; Total virtual pins              ; 0                                               ;
 ; Total block memory bits         ; 0                                               ;
@@ -185,25 +185,25 @@ refer to the applicable agreement for further details.
 +---------------------------------------------+-----------+
 ; Resource                                    ; Usage     ;
 +---------------------------------------------+-----------+
-; Estimate of Logic utilization (ALMs needed) ; 33        ;
+; Estimate of Logic utilization (ALMs needed) ; 40        ;
 ;                                             ;           ;
-; Combinational ALUT usage for logic          ; 54        ;
+; Combinational ALUT usage for logic          ; 63        ;
 ;     -- 7 input functions                    ; 0         ;
-;     -- 6 input functions                    ; 11        ;
-;     -- 5 input functions                    ; 3         ;
-;     -- 4 input functions                    ; 4         ;
-;     -- <=3 input functions                  ; 36        ;
+;     -- 6 input functions                    ; 16        ;
+;     -- 5 input functions                    ; 4         ;
+;     -- 4 input functions                    ; 6         ;
+;     -- <=3 input functions                  ; 37        ;
 ;                                             ;           ;
-; Dedicated logic registers                   ; 46        ;
+; Dedicated logic registers                   ; 55        ;
 ;                                             ;           ;
 ; I/O pins                                    ; 31        ;
 ;                                             ;           ;
 ; Total DSP Blocks                            ; 0         ;
 ;                                             ;           ;
 ; Maximum fan-out node                        ; clk~input ;
-; Maximum fan-out                             ; 46        ;
-; Total fan-out                               ; 377       ;
-; Average fan-out                             ; 2.30      ;
+; Maximum fan-out                             ; 55        ;
+; Total fan-out                               ; 454       ;
+; Average fan-out                             ; 2.49      ;
 +---------------------------------------------+-----------+
 
 
@@ -212,7 +212,7 @@ refer to the applicable agreement for further details.
 +----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+---------------------+-------------+--------------+
 ; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Virtual Pins ; Full Hierarchy Name ; Entity Name ; Library Name ;
 +----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+---------------------+-------------+--------------+
-; |i2c_master                ; 54 (54)             ; 46 (46)                   ; 0                 ; 0          ; 31   ; 0            ; |i2c_master         ; i2c_master  ; work         ;
+; |i2c_master                ; 63 (63)             ; 55 (55)                   ; 0                 ; 0          ; 31   ; 0            ; |i2c_master         ; i2c_master  ; work         ;
 +----------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+---------------------+-------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
@@ -235,18 +235,24 @@ Encoding Type:  One-Hot
 +----------------+----------------+----------------+----------+----------+----------------+---------------+-------------+-------------+------------+
 
 
-+--------------------------------------------------------------------------------+
-; Registers Removed During Synthesis                                             ;
-+---------------------------------------+----------------------------------------+
-; Register name                         ; Reason for Removal                     ;
-+---------------------------------------+----------------------------------------+
-; state~4                               ; Lost fanout                            ;
-; state~5                               ; Lost fanout                            ;
-; state~6                               ; Lost fanout                            ;
-; state.STOP                            ; Merged with state.MSTR_ACK             ;
-; state.MSTR_ACK                        ; Stuck at GND due to stuck port data_in ;
-; Total Number of Removed Registers = 5 ;                                        ;
-+---------------------------------------+----------------------------------------+
++---------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                              ;
++----------------------------------------+----------------------------------------+
+; Register name                          ; Reason for Removal                     ;
++----------------------------------------+----------------------------------------+
+; data_rd[7]~reg0                        ; Stuck at GND due to stuck port data_in ;
+; data_rd[6]~reg0                        ; Stuck at GND due to stuck port data_in ;
+; data_rd[5]~reg0                        ; Stuck at GND due to stuck port data_in ;
+; data_rd[4]~reg0                        ; Stuck at GND due to stuck port data_in ;
+; data_rd[3]~reg0                        ; Stuck at GND due to stuck port data_in ;
+; data_rd[2]~reg0                        ; Stuck at GND due to stuck port data_in ;
+; data_rd[1]~reg0                        ; Stuck at GND due to stuck port data_in ;
+; data_rd[0]~reg0                        ; Stuck at GND due to stuck port data_in ;
+; state~4                                ; Lost fanout                            ;
+; state~5                                ; Lost fanout                            ;
+; state~6                                ; Lost fanout                            ;
+; Total Number of Removed Registers = 11 ;                                        ;
++----------------------------------------+----------------------------------------+
 
 
 +------------------------------------------------------+
@@ -254,12 +260,12 @@ Encoding Type:  One-Hot
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 46    ;
+; Total registers                              ; 55    ;
 ; Number of registers using Synchronous Clear  ; 32    ;
 ; Number of registers using Synchronous Load   ; 0     ;
-; Number of registers using Asynchronous Clear ; 45    ;
+; Number of registers using Asynchronous Clear ; 47    ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 4     ;
+; Number of registers using Clock Enable       ; 15    ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
 
@@ -270,9 +276,9 @@ Encoding Type:  One-Hot
 ; Inverted Register                      ; Fan out ;
 +----------------------------------------+---------+
 ; busy~reg0                              ; 2       ;
-; bit_cnt[0]                             ; 5       ;
-; bit_cnt[2]                             ; 3       ;
-; bit_cnt[1]                             ; 4       ;
+; bit_cnt[2]                             ; 7       ;
+; bit_cnt[1]                             ; 8       ;
+; bit_cnt[0]                             ; 9       ;
 ; Total number of inverted registers = 4 ;         ;
 +----------------------------------------+---------+
 
@@ -282,6 +288,7 @@ Encoding Type:  One-Hot
 +--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------+
 ; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output ;
 +--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------+
+; 3:1                ; 8 bits    ; 16 LEs        ; 0 LEs                ; 16 LEs                 ; Yes        ; |i2c_master|addr_rw[6]     ;
 ; 3:1                ; 3 bits    ; 6 LEs         ; 3 LEs                ; 3 LEs                  ; Yes        ; |i2c_master|bit_cnt[2]     ;
 +--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------+
 
@@ -302,27 +309,27 @@ Note: In order to hide this table in the UI and the text report file, please set
 +-----------------------+-----------------------------+
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
-; arriav_ff             ; 46                          ;
-;     CLR               ; 9                           ;
+; arriav_ff             ; 55                          ;
+;     CLR               ; 8                           ;
 ;     CLR SCLR          ; 32                          ;
-;     ENA CLR           ; 4                           ;
-;     plain             ; 1                           ;
+;     ENA               ; 8                           ;
+;     ENA CLR           ; 7                           ;
 ; arriav_io_obuf        ; 2                           ;
-; arriav_lcell_comb     ; 56                          ;
+; arriav_lcell_comb     ; 65                          ;
 ;     arith             ; 32                          ;
 ;         1 data inputs ; 32                          ;
-;     normal            ; 24                          ;
+;     normal            ; 33                          ;
 ;         0 data inputs ; 1                           ;
 ;         1 data inputs ; 1                           ;
 ;         2 data inputs ; 2                           ;
-;         3 data inputs ; 2                           ;
-;         4 data inputs ; 4                           ;
-;         5 data inputs ; 3                           ;
-;         6 data inputs ; 11                          ;
+;         3 data inputs ; 3                           ;
+;         4 data inputs ; 6                           ;
+;         5 data inputs ; 4                           ;
+;         6 data inputs ; 16                          ;
 ; boundary_port         ; 31                          ;
 ;                       ;                             ;
 ; Max LUT depth         ; 4.10                        ;
-; Average LUT depth     ; 2.71                        ;
+; Average LUT depth     ; 2.65                        ;
 +-----------------------+-----------------------------+
 
 
@@ -341,7 +348,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 18.1.0 Build 625 09/12/2018 SJ Standard Edition
-    Info: Processing started: Sun Mar 23 16:42:28 2025
+    Info: Processing started: Sun Mar 23 17:04:58 2025
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off FPGA_I2CDriver -c FPGA_I2CDriver
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
@@ -350,45 +357,31 @@ Info (12021): Found 1 design units, including 1 entities, in source file i2c_mas
 Warning (10236): Verilog HDL Implicit Net warning at i2c_master.v(38): created implicit net for "sda_ena" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 38
 Info (12127): Elaborating entity "i2c_master" for the top level hierarchy
 Warning (10036): Verilog HDL or VHDL warning at i2c_master.v(38): object "sda_ena" assigned a value but never read File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 38
+Warning (10858): Verilog HDL warning at i2c_master.v(24): object data_rx used but never assigned File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 24
 Warning (10858): Verilog HDL warning at i2c_master.v(28): object sda_ena_n used but never assigned File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 28
 Warning (10240): Verilog HDL Always Construct warning at i2c_master.v(68): inferring latch(es) for variable "scl_ena", which holds its previous value in one or more paths through the always construct File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
 Warning (10240): Verilog HDL Always Construct warning at i2c_master.v(68): inferring latch(es) for variable "ack_error", which holds its previous value in one or more paths through the always construct File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-Warning (10240): Verilog HDL Always Construct warning at i2c_master.v(68): inferring latch(es) for variable "data_rd", which holds its previous value in one or more paths through the always construct File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
+Warning (10030): Net "data_rx" at i2c_master.v(24) has no driver or initial value, using a default initial value '0' File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 24
 Warning (10030): Net "sda_ena_n" at i2c_master.v(28) has no driver or initial value, using a default initial value '0' File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 28
-Info (10041): Inferred latch for "data_rd[0]" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-Info (10041): Inferred latch for "data_rd[1]" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-Info (10041): Inferred latch for "data_rd[2]" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-Info (10041): Inferred latch for "data_rd[3]" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-Info (10041): Inferred latch for "data_rd[4]" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-Info (10041): Inferred latch for "data_rd[5]" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-Info (10041): Inferred latch for "data_rd[6]" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-Info (10041): Inferred latch for "data_rd[7]" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
 Info (10041): Inferred latch for "ack_error" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
 Info (10041): Inferred latch for "scl_ena" at i2c_master.v(68) File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
 Warning (13032): The following tri-state nodes are fed by constants
     Warning (13033): The pin "sda" is fed by GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 16
 Warning (13024): Output pins are stuck at VCC or GND
-    Warning (13410): Pin "data_rd[0]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-    Warning (13410): Pin "data_rd[1]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-    Warning (13410): Pin "data_rd[2]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-    Warning (13410): Pin "data_rd[3]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-    Warning (13410): Pin "data_rd[4]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-    Warning (13410): Pin "data_rd[5]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-    Warning (13410): Pin "data_rd[6]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
-    Warning (13410): Pin "data_rd[7]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 68
+    Warning (13410): Pin "data_rd[0]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 78
+    Warning (13410): Pin "data_rd[1]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 78
+    Warning (13410): Pin "data_rd[2]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 78
+    Warning (13410): Pin "data_rd[3]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 78
+    Warning (13410): Pin "data_rd[4]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 78
+    Warning (13410): Pin "data_rd[5]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 78
+    Warning (13410): Pin "data_rd[6]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 78
+    Warning (13410): Pin "data_rd[7]" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 78
     Warning (13410): Pin "ack_error" is stuck at GND File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 15
 Info (286030): Timing-Driven Synthesis is running
 Info (17049): 3 registers lost all their fanouts during netlist optimizations.
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Warning (21074): Design contains 15 input pin(s) that do not drive logic
-    Warning (15610): No output dependent on input pin "addr[0]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 10
-    Warning (15610): No output dependent on input pin "addr[1]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 10
-    Warning (15610): No output dependent on input pin "addr[2]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 10
-    Warning (15610): No output dependent on input pin "addr[3]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 10
-    Warning (15610): No output dependent on input pin "addr[4]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 10
-    Warning (15610): No output dependent on input pin "addr[5]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 10
-    Warning (15610): No output dependent on input pin "addr[6]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 10
+Warning (21074): Design contains 8 input pin(s) that do not drive logic
     Warning (15610): No output dependent on input pin "data_wr[0]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 12
     Warning (15610): No output dependent on input pin "data_wr[1]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 12
     Warning (15610): No output dependent on input pin "data_wr[2]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 12
@@ -397,15 +390,15 @@ Warning (21074): Design contains 15 input pin(s) that do not drive logic
     Warning (15610): No output dependent on input pin "data_wr[5]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 12
     Warning (15610): No output dependent on input pin "data_wr[6]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 12
     Warning (15610): No output dependent on input pin "data_wr[7]" File: C:/Users/20mbm14/Desktop/FPGA_I2CDriver/i2c_master.v Line: 12
-Info (21057): Implemented 86 device resources after synthesis - the final resource count might be different
+Info (21057): Implemented 103 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 19 input pins
     Info (21059): Implemented 10 output pins
     Info (21060): Implemented 2 bidirectional pins
-    Info (21061): Implemented 55 logic cells
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 36 warnings
+    Info (21061): Implemented 72 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 30 warnings
     Info: Peak virtual memory: 4889 megabytes
-    Info: Processing ended: Sun Mar 23 16:42:35 2025
-    Info: Elapsed time: 00:00:07
-    Info: Total CPU time (on all processors): 00:00:06
+    Info: Processing ended: Sun Mar 23 17:05:04 2025
+    Info: Elapsed time: 00:00:06
+    Info: Total CPU time (on all processors): 00:00:05
 
 
