@@ -6,3 +6,5 @@ simulation/
 
 # Build output
 build/
+
+.ds_store
