@@ -1,0 +1,24 @@
+module cpu();
+
+	input wire clk,
+   input wire reset_n,
+   input wire ena,
+   input wire [6:0] addr,
+   input wire rw,
+   input wire [7:0] data_wr,
+   output reg busy,
+   output reg [7:0] data_rd,
+   output reg ack_error,
+   inout wire sda,
+   inout wire scl
+
+reg clk;
+
+//always (48 MHz) clk <= ~clk;
+
+//getting data from one encoder:
+//first set addr input, set rw, if write set data_wr
+
+
+
+endmodule 

@@ -1,7 +1,7 @@
 //based on digikey design: https://forum.digikey.com/t/i2c-master-vhdl/12797
 
 module i2c_master #(
-   parameter input_clk = 50000000,
+   parameter input_clk = 48000000,
    parameter bus_clk = 400000
 ) (
    input wire clk,
@@ -39,7 +39,7 @@ module i2c_master #(
 							: state == STOP ? ~data_clk_prev
 							: sda_int;
 	
-always @(posedge clk or negedge reset_n) begin //clock quartering to allow proccessor to run faster while maintaining 400MHz SCL
+always @(posedge clk or negedge reset_n) begin //clock quartering
    if (reset_n == 0) begin
        count <= 0;
        data_clk <= 1'b0;
