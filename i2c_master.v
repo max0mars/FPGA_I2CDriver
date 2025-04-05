@@ -185,7 +185,7 @@ always @ (posedge clk or negedge reset_n) begin
 				STOP: begin
 					scl_ena <= 0;
 				end
-				default: 
+				default: ;
 			endcase
 		end
 	end
