@@ -1,0 +1,102 @@
+`timescale 1ns/10ps
+module TB_i2c_master_READ();
+
+//20.833333... period = 48 MHz
+//10.4 ns clock flip
+reg clock, reset, enable, rw;
+reg [6:0] addr;
+reg [7:0] data_wr;
+wire[7:0] data_rd;
+wire busy, ack_error; 
+
+
+wire data_line, clock_line;
+wire dataVal, clockVal;
+reg data_driver, clock_driver;
+
+assign data_line = data_driver;
+assign clock_line = clock_driver;
+
+assign dataVal = data_line === 1'bz ? 1'b1 : data_line;
+assign clockVal = clock_line === 1'bz ? 1'b1 : clock_line;
+
+
+reg[7:0] data;
+
+i2c_master i2c (clock, reset, enable, addr, rw, data_wr, busy, data_rd, ack_error, data_line, clock_line);
+
+reg last;
+reg [2:0] bit_cnt;
+reg[3:0] st;
+parameter rs = 4'd0, receiving = 4'd2, ACK1 = 4'd3, ACK2 = 4'd4, READY = 4'd5, SENDING = 4'd6, WAITACK1 = 4'd7, WAITACK2 = 4'd8, T7 = 4'd9, T8 = 4'd10, T9 = 4'd11;//can add more states here
+initial begin 
+	clock = 0; st = 4'd0; 
+	data_driver = 1'bz;
+	clock_driver = 1'bz;
+	addr = 7'b1010101;
+	data_wr = 8'b11001100;
+	rw = 1'b1; enable = 1'b1;
+	reset = 1'b1; bit_cnt = 3'd7; last = 1'b1;
+end
+
+
+always #10 clock = ~clock;
+
+always @ (clock) begin
+	if(dataVal !== last) begin
+		last <= dataVal;
+		if(clockVal == 1 && dataVal === 1'b0) begin //START Condition
+			st <= receiving;
+			bit_cnt <= 3'd7;
+		end
+	end
+	if(clock == 1) begin //rising
+		if(st == rs) begin
+			reset <= 0;
+			st <= READY;
+		end else reset <= 1;
+		if(ack_error === 1'b1) enable = 1'b0;
+	end else begin //falling
+		
+	end
+end
+
+always @(clockVal) begin
+	if(clockVal == 1) begin //rising (read)
+		if(st == receiving) begin
+			if(bit_cnt == 0) begin
+				bit_cnt <= 3'd7;
+				data[bit_cnt] <= dataVal;
+				st <= ACK1;
+			end else begin
+				bit_cnt <= bit_cnt - 1'b1;
+				data[bit_cnt] <= dataVal;
+				st <= receiving;
+			end
+		end else if(st == ACK2) begin
+			st <= SENDING;
+		end else if(st == WAITACK2) begin
+			st <= SENDING;
+		end
+	end else begin //falling (write)
+		if(st == ACK1) begin //sending ACK
+			data_driver <= 1'b0;
+			st <= ACK2;
+		end else if(st == WAITACK1) begin 
+			st <= WAITACK2;
+		end else if (st == SENDING) begin
+			if(bit_cnt == 0) begin
+				bit_cnt <= 3'd7;
+				data_driver <= data[bit_cnt];
+				st <= WAITACK1;
+			end else begin
+				bit_cnt <= bit_cnt - 1'b1;
+				data_driver <= data[bit_cnt];
+				st <= SENDING;
+			end
+		end
+	end
+end
+
+
+endmodule

@@ -35,7 +35,7 @@ module i2c_master #(
    assign scl = (scl_ena && ~scl_clk) ? 1'b0 : 1'bz;
    assign sda = (sda_ena_n == 1'b0) ? 1'b0 : 1'bz;
 	
-	assign sda_ena = state == START ? data_clk_prev 
+	assign sda_ena_n = state == START ? data_clk_prev
 							: state == STOP ? ~data_clk_prev
 							: sda_int;
 	
@@ -52,13 +52,13 @@ always @(posedge clk or negedge reset_n) begin //clock quartering
 		if(count < div1) begin					// 1/4, 00 (scl_clk, data_clk)
 			scl_clk <= 1'b0;
 			data_clk <= 1'b0;
-		end else if(count < div2) begin		// 2/4, 01
+		end else if(count < div2) begin		// 2/4, 01 (data_clk rising) Can safely write, NOT read
 			scl_clk <= 1'b0;
 			data_clk <= 1'b1;
 		end else if(count < (div3)) begin	// 3/4, 11
 			scl_clk <= 1'b1;
 			data_clk <= 1'b1;
-		end else begin 							// 4/4, 10
+		end else begin 							// 4/4, 10 (data_clock falling) used for START/STOP; OR can safely read, NOT write
 			scl_clk <= 1'b1;
 			data_clk <= 1'b0;
 		end
@@ -100,7 +100,7 @@ always @ (posedge clk or negedge reset_n) begin
 						state <= SLV_ACK1;
 					end else begin
 						bit_cnt <= bit_cnt - 1'b1;
-						sda_int <= data_tx[bit_cnt-1];
+						sda_int <= addr_rw[bit_cnt-1];
 						state <= COMMAND;
 					end
 				end
@@ -164,6 +164,9 @@ always @ (posedge clk or negedge reset_n) begin
 					busy <= 1'b0;
 					state <= READY;
 				end
+				default: begin
+					state <= READY;
+				end
 			endcase
 		end else if (data_clk == 0 && data_clk_prev == 1)	begin	//data_clk falling
 			case(state)
@@ -174,13 +177,13 @@ always @ (posedge clk or negedge reset_n) begin
 					end
 				end
 				SLV_ACK1: begin
-					if(sda != 0 || ack_error == 1) ack_error <= 1;
+					if(sda !== 0 || ack_error == 1) ack_error <= 1;
 				end
 				RD: begin
 					data_rx[bit_cnt] <= sda;
 				end
 				SLV_ACK2: begin
-					if(sda != 0 || ack_error == 1) ack_error <= 1;
+					if(sda !== 0 || ack_error == 1) ack_error <= 1;
 				end
 				STOP: begin
 					scl_ena <= 0;

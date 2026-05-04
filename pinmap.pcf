@@ -1,0 +1,3 @@
+# I2C bus to MCU
+set_io --warn-no-port MCU_SDA 19
+set_io --warn-no-port MCU_SCL 18

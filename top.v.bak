@@ -1,0 +1,11 @@
+module top (
+    inout MCU_SDA,
+    output MCU_SCL,
+);
+
+    driver mcu_driver (
+        .SDA (MCU_SDA),
+        .SCL (MCU_SCL)
+    );
+
+endmodule

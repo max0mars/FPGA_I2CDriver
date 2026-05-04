@@ -1,0 +1,11 @@
+module Testing (
+	input clk,
+	input reset_n
+);
+
+wire
+
+control_unit cu ();
+
+
+endmodule

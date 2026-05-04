@@ -1,0 +1,100 @@
+`timescale 1ns/10ps
+module TB_encoder_interface();
+
+
+reg clock, reset, getData;
+wire[11:0] encoderData;
+wire data_flag;
+
+//handles the InOut pins
+wire data_line, clock_line;
+wire dataVal, clockVal;
+reg data_driver, clock_driver;
+assign data_line = data_driver;
+assign clock_line = clock_driver;
+assign dataVal = data_line === 1'bz ? 1'b1 : data_line;
+assign clockVal = clock_line === 1'bz ? 1'b1 : clock_line;
+
+encoder_interface ei (clock, reset, getData, encoderData, data_flag, data_line, clock_line);
+
+reg last, rw;
+reg [2:0] bit_cnt;
+reg[3:0] i2c_state;
+reg[7:0] data;
+parameter rs = 4'd0, receiving = 4'd2, ACK1 = 4'd3, ACK2 = 4'd4, READY = 4'd5, sending = 4'd6, WAITACK1 = 4'd7, WAITACK2 = 4'd8, T7 = 4'd9, T8 = 4'd10, T9 = 4'd11;//can add more states here
+
+initial begin
+	clock = 0; i2c_state = 4'd0;
+	data_driver = 1'bz;
+	clock_driver = 1'bz;
+	rw = 1'b0;
+	reset = 1'b1; bit_cnt = 3'd7; last = 1'b1;
+end
+
+
+always #10 clock = ~clock;
+
+
+
+//i2c_state follows the i2c driver and sends the ack signals so it can function properly
+always @ (clock) begin
+	if(clock == 1) begin //rising
+		if(i2c_state == rs) begin
+			reset <= 0;
+			i2c_state <= READY;
+		end else reset <= 1;
+	end else begin //falling
+		if(dataVal !== last) begin
+			if(clockVal == 1 && dataVal === 1'b0 && last <= 1'b1) begin //START Condition
+				i2c_state <= receiving;
+				bit_cnt <= 3'd7;
+			end
+		last <= dataVal;
+		end
+	end
+end
+
+always @(clockVal) begin
+	if(clockVal == 1) begin //rising (read)
+		case (i2c_state)
+			receiving: begin
+				if(bit_cnt == 0) begin
+					bit_cnt <= 3'd7;
+					data[bit_cnt] <= dataVal;
+					i2c_state <= ACK1;
+				end else begin
+					bit_cnt <= bit_cnt - 1'b1;
+					data[bit_cnt] <= dataVal;
+					i2c_state <= receiving;
+				end
+			end
+			ACK2: i2c_state <= sending;
+			WAITACK2: i2c_state <= sending;
+		endcase
+	end else begin //falling (write)
+		case(i2c_state)
+			ACK1: begin
+				data_driver <= 1'b0;
+				i2c_state <= ACK2;
+			end
+			ACK2: begin
+				data_driver <= 1'bz;
+				if(data[0] == 0) i2c_state <= receiving;
+				else i2c_state <= sending;
+			end
+			WAITACK1: i2c_state <= sending;
+			sending: begin
+				if(bit_cnt == 0) begin
+					bit_cnt <= 3'd7;
+					data_driver <= data[bit_cnt];
+					i2c_state <= WAITACK1;
+				end else begin
+					bit_cnt <= bit_cnt - 1'b1;
+					data_driver <= data[bit_cnt];
+					i2c_state <= sending;
+				end
+			end
+		endcase
+	end
+end
+endmodule

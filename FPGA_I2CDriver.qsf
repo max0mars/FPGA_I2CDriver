@@ -38,10 +38,10 @@
 
 set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CGXFC7C7F23C8
-set_global_assignment -name TOP_LEVEL_ENTITY i2c_master
+set_global_assignment -name TOP_LEVEL_ENTITY Testing
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "15:07:14  MARCH 09, 2025"
-set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Standard Edition"
+set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Lite Edition"
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
@@ -52,16 +52,45 @@ set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH driver_tb -section_id eda_simulation
-set_global_assignment -name EDA_TEST_BENCH_NAME driver_tb -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id driver_tb
-set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "25 us" -section_id driver_tb
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME driver_tb -section_id driver_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE driver_tb.v -section_id driver_tb
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH TB_Everything -section_id eda_simulation
+set_global_assignment -name EDA_TEST_BENCH_NAME TB_i2c_master_WRITE -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id TB_i2c_master_WRITE
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "200 us" -section_id TB_i2c_master_WRITE
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME TB_i2c_master_WRITE -section_id TB_i2c_master_WRITE
+set_global_assignment -name EDA_TEST_BENCH_NAME TB_i2c_master_READ -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id TB_i2c_master_READ
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "200 us" -section_id TB_i2c_master_READ
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME TB_i2c_master_READ -section_id TB_i2c_master_READ
+set_global_assignment -name EDA_TEST_BENCH_NAME TB_encoder_interface -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id TB_encoder_interface
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "500 us" -section_id TB_encoder_interface
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME TB_encoder_interface -section_id TB_encoder_interface
+set_global_assignment -name VERILOG_FILE top.v
+set_global_assignment -name VERILOG_FILE TB_i2c_master_WRITE.v
+set_global_assignment -name VERILOG_FILE TB_i2c_master_READ.v
+set_global_assignment -name VERILOG_FILE TB_encoder_interface.v
+set_global_assignment -name VERILOG_FILE i2c_master.v
+set_global_assignment -name VERILOG_FILE encoder_interface.v
+set_global_assignment -name VERILOG_FILE control_unit.v
+set_global_assignment -name VERILOG_FILE TB_control_unit.v
+set_global_assignment -name EDA_TEST_BENCH_NAME TB_control_unit -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id TB_control_unit
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "250 us" -section_id TB_control_unit
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME TB_control_unit -section_id TB_control_unit
+set_global_assignment -name VERILOG_FILE odom_interface.v
+set_global_assignment -name VERILOG_FILE testing_I2C_Device.v
+set_global_assignment -name VERILOG_FILE Testing.v
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VERILOG_FILE TB_Everything.v
+set_global_assignment -name EDA_TEST_BENCH_NAME TB_Everything -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id TB_Everything
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1 ms" -section_id TB_Everything
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME TB_Everything -section_id TB_Everything
+set_global_assignment -name EDA_TEST_BENCH_FILE TB_i2c_master_WRITE.v -section_id TB_i2c_master_WRITE
+set_global_assignment -name EDA_TEST_BENCH_FILE TB_i2c_master_READ.v -section_id TB_i2c_master_READ
+set_global_assignment -name EDA_TEST_BENCH_FILE TB_encoder_interface.v -section_id TB_encoder_interface
+set_global_assignment -name EDA_TEST_BENCH_FILE TB_control_unit.v -section_id TB_control_unit
+set_global_assignment -name EDA_TEST_BENCH_FILE TB_Everything.v -section_id TB_Everything
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
-set_global_assignment -name VERILOG_FILE encoder_interface.v
-set_global_assignment -name VERILOG_FILE cpu.v
-set_global_assignment -name VERILOG_FILE i2c_master.v

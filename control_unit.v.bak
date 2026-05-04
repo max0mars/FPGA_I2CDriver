@@ -1,0 +1,15 @@
+module control_unit(
+
+
+);
+
+//connection with 2? encoders
+//connection with other chip
+//maintain an overarching state as well as an independant state for each encoder
+
+//counter for global time
+//when getting data from the encoder, store the data and a 32 bit time stamp.
+
+//pump out data to other chip
+
+endmodule
